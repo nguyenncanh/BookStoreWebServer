@@ -53,6 +53,6 @@ module.exports.search = async function(req, res) {
   var macthBooks = books.filter(function (book) {
     return book.title.toLowerCase().indexOf(q.toLowerCase()) != -1;
   });
-
+  
   res.render("products/index", { products: macthBooks, searchValue: q });
 }

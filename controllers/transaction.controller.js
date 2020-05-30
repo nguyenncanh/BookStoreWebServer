@@ -20,10 +20,7 @@ module.exports.index = async (req, res) => {
   // var books = db.get("books").value();
 
   //mongoose
-  var transaction = await Transaction.findOne({
-    _id: cookieUser,
-    isComplete: false,
-  });
+  var transaction = await Transaction.findOne({$and: [{idUser: cookieUser}, {isComplete: false}]});
 
   var transactions = await Transaction.find();
 
