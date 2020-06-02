@@ -22,10 +22,12 @@ const authRoute = require("./routes/auth.route");
 const productsRoute = require("./routes/products.route");
 const cartRoute = require("./routes/cart.route");
 
+var apiLoginRoute = require("./api/routes/login.route");
+var apiTransactionsRoute = require("./api/routes/transaction.route");
+
 var authMiddleware = require("./middlewares/auth.middleware");
 var sessionMiddleware = require("./middlewares/session.middleware");
 var cartMiddleware = require("./middlewares/cart.middleware");
-const db = require('./db');
 
 app.set("view engine", "pug");
 app.set("views", "./views");
@@ -36,6 +38,9 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 // chuyển 1 chuổi secret
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static("public"));
+
+app.use('/api', apiTransactionsRoute);
+app.use('/api', apiLoginRoute);
 
 // kiểm tra và tạo sessionId khi mở bất kì trang nào
 app.use(sessionMiddleware);
