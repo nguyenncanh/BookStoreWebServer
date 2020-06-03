@@ -69,3 +69,9 @@ module.exports.postLogin = async function (req, res) {
         res.status(400).json({ message })
     }
 };
+
+module.exports.logout = function (req, res) {
+    res.clearCookie('userId');
+    res.clearCookie('sessionId');
+    return res.status(200).json({message: "logout success!"});
+}

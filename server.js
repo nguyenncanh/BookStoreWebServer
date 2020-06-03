@@ -39,7 +39,7 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static("public"));
 
-app.use('/api', apiTransactionsRoute);
+app.use('/api/transactions', apiTransactionsRoute);
 app.use('/api', apiAuthRoute); 
 
 // kiểm tra và tạo sessionId khi mở bất kì trang nào
