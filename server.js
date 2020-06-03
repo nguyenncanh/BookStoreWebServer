@@ -22,7 +22,7 @@ const authRoute = require("./routes/auth.route");
 const productsRoute = require("./routes/products.route");
 const cartRoute = require("./routes/cart.route");
 
-var apiLoginRoute = require("./api/routes/login.route");
+var apiAuthRoute = require("./api/routes/auth.route");
 var apiTransactionsRoute = require("./api/routes/transaction.route");
 
 var authMiddleware = require("./middlewares/auth.middleware");
@@ -40,7 +40,7 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static("public"));
 
 app.use('/api', apiTransactionsRoute);
-app.use('/api', apiLoginRoute);
+app.use('/api', apiAuthRoute); 
 
 // kiểm tra và tạo sessionId khi mở bất kì trang nào
 app.use(sessionMiddleware);
