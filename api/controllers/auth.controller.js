@@ -65,7 +65,7 @@ module.exports.postLogin = async function (req, res) {
             // });
         }
     } catch({ message = "Invalid Required" }){
-        res.status(400).json({ message })
+        return res.status(400).json({ message })
     }
 };
 

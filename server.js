@@ -27,6 +27,7 @@ var apiTransactionsRoute = require("./api/routes/transaction.route");
 var apiBooksRoute = require("./api/routes/book.route");
 var apiUsersRoute = require("./api/routes/user.route");
 var apiProductsRoute = require("./api/routes/product.route");
+var apiCartsRoute = require("./api/routes/cart.route");
 
 var authMiddleware = require("./middlewares/auth.middleware");
 var sessionMiddleware = require("./middlewares/session.middleware");
@@ -46,6 +47,7 @@ app.use('/api/transactions', apiTransactionsRoute);
 app.use('/api/books', apiBooksRoute);
 app.use('/api/users', apiUsersRoute);
 app.use('/api/products', apiProductsRoute);
+app.use('/api/carts', apiCartsRoute);
 app.use('/api', apiAuthRoute); 
 
 // kiểm tra và tạo sessionId khi mở bất kì trang nào
