@@ -22,8 +22,8 @@ router.post('/:id/update', controller.postUpdate);
 
 router.post('/create', 
             upload.single('avatar'), 
-            validate.postCreate, 
-            controller.postCreate
+            validate.createBook,
+            controller.createBook
            );
 
 module.exports = router;

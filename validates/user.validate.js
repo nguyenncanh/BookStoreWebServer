@@ -1,4 +1,4 @@
-module.exports.postCreate = function(req, res, next) {
+module.exports.createUser = function(req, res, next) {
   var errors = [];
   if (!req.body.name) {
     errors.push("Name is required.");

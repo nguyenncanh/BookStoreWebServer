@@ -125,7 +125,7 @@ module.exports.postUpdate = async function(req, res) {
   res.redirect("/books");
 };
 
-module.exports.postCreate = async function(req, res) {
+module.exports.createBook = async function(req, res) {
   var path = "";
   
   if (!req.file) {

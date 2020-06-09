@@ -29,8 +29,8 @@ router.get('/create', controller.create);
 // tên avatar phải giống với attribute name=avatar bên form input
 router.post('/create', 
             upload.single('avatar'), 
-            validate.postCreate, 
-            controller.postCreate
+            validate.createUser, 
+            controller.createUser
            );
 
 router.get('/profile', controller.profile)

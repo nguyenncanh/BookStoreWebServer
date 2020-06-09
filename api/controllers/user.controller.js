@@ -12,63 +12,61 @@ cloudinary.config({
     api_secret: process.env.CLOUD_SECRET
 });
 
-module.exports.index = async (req, res) => {
-    var cookieUser = req.signedCookies.userId;
-    var user = await User.findOne({ _id: cookieUser });
+module.exports.getUsers = async (req, res) => {
     var users = await User.find();
-    if (user.isAdmin === true) {
-        return res.status(200).json({ users: users });
-    }
-};
+    if (!req.query.q) {
+        var cookieUser = req.signedCookies.userId;
+        var user = await User.findOne({ _id: cookieUser });
+        if (user.isAdmin === true) {
+            return res.status(200).json({ users: users });
+        }
+    } else {
+        var q = req.query.q;
+        var macthUsers = users.filter(function (user) {
+            return user.name.toLowerCase().indexOf(q.toLowerCase()) != -1;
+        });
 
-module.exports.search = async function (req, res) {
-    var q = req.query.q;
-
-    var users = await User.find();
-    var macthUsers = users.filter(function (user) {
-        return user.name.toLowerCase().indexOf(q.toLowerCase()) != -1;
-    });
-
-    return res.status(200).json({
+        return res.status(200).json({
             users: macthUsers,
-            searchValue: q});
+            searchValue: q
+        });
+    }
+    
 };
 
-module.exports.view = async function (req, res) {
-    var id = req.params.id;
-    var user = await User.findOne({ _id: id })
+module.exports.getUser = async function (req, res) {
+    if (req.params.id) {
+        var id = req.params.id;
+    } else {
+        var id = req.signedCookies.userId;
+    }
+    var user = await User.findOne({ _id: id });
 
     return res.status(200).json({
         user: user
     });
 };
 
-module.exports.delete = async function (req, res) {
+module.exports.deleteUser = async function (req, res) {
     var id = req.params.id;
     await User.findByIdAndRemove(id).exec();
 
     return res.status(200).json('Delete success!');
 };
 
-module.exports.update = async function (req, res) {
-    var id = req.params.id;
-    var user = await User.findById(id);
-    return res.status(200).json({
-        user: user
-    });
+module.exports.updateUser = async function (req, res) {
+        var idUser = req.params.id;
+        await User.findById(idUser, function (err, doc) {
+            doc.name = req.body.name;
+            doc.phone = req.body.phone;
+            doc.email = req.body.email;
+            doc.save();
+        });
+
+        return res.status(200).json('Update success!');
 };
 
-module.exports.postUpdate = async function (req, res) {
-    var id = req.params.id;
-    await User.findById(id, function (err, doc) {
-        doc.name = req.body.name;
-        doc.save();
-    });
-
-    return res.status(200).json('Update success!');
-};
-
-module.exports.postCreate = async function (req, res) {
+module.exports.createUser = async function (req, res) {
     var hashPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12));
     var path = '';
     if (!req.file) {
@@ -92,35 +90,8 @@ module.exports.postCreate = async function (req, res) {
         fs.unlinkSync(req.file.path);
     }
 
-    return res.status(200).json('Create success!');
+    return res.status(200).json({message: 'Create success!'});
 };
-
-module.exports.profile = async function (req, res) {
-    var idUser = req.signedCookies.userId;
-
-    var user = await User.findById(idUser);
-    return res.json({
-        users: user
-    });
-}
-
-module.exports.updateProfile = async function (req, res) {
-    var idUser = req.signedCookies.userId;
-    await User.findById(idUser, function (err, doc) {
-        doc.name = req.body.name;
-        doc.phone = req.body.phone;
-        doc.email = req.body.email;
-        doc.save();
-    });
-
-    return res.status(200).json('Update success!');
-}
-
-module.exports.avatar = async function (req, res) {
-    var idUser = req.signedCookies.userId;
-    var user = await User.findById(idUser);
-    return res.json({ users: user });
-}
 
 module.exports.updateAvatar = async function (req, res) {
     var id = req.signedCookies.userId;
@@ -131,19 +102,11 @@ module.exports.updateAvatar = async function (req, res) {
         path = await cloudinary.uploader.upload(req.file.path).then(doc => doc.url)
     }
 
-    //lowdb
-    // db.get('users')
-    // .find({ id: id})
-    // .assign({avatar: path})
-    // .write();
-
-    //mongoose
     await User.findById(id, function (err, doc) {
         doc.avatar = path;
         doc.save();
     });
 
-    // xóa file ảnh để ko phải lưu trong file upload
     if (req.file) {
         fs.unlinkSync(req.file.path);
     }
@@ -167,17 +130,17 @@ module.exports.changePassword = async function (req, res) {
                 doc.save();
             });
 
-            return res.status(200).json({message: "Change password success!"});
+            return res.status(200).json("Change password success!");
         } else {
-            return res.status(200).json({
-                errors: ["The confirm password is not the same as the new password"],
+            return res.status(400).json({
+                message: "The confirm password is not the same as the new password",
                 values: req.body
             })
         }
     } else {
-        return res.status(200).json({
-            errors: ["Wrong password"],
+        return res.status(400).json({
+            message: "Wrong password",
             values: req.body
         })
-    }
+    } 
 }

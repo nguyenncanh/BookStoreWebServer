@@ -6,22 +6,18 @@ const controller = require('../controllers/book.controller');
 var validate = require('../../validates/book.validate');
 var upload = multer({ dest: './public/uploads/' });
 
-router.get("/", controller.index);
+router.get("/", controller.getBooks);
 
-router.get('/search', controller.search);
+router.get('/:id', controller.getBook);
 
-router.get('/:id/view', controller.view);
+router.delete('/:id', controller.deleteBook);
 
-router.delete('/:id/delete', controller.delete);
+router.put('/:id', controller.updateBook);
 
-router.get('/:id/update', controller.update);
-
-router.put('/:id/update', controller.postUpdate);
-
-router.post('/create',
+router.post('/',
     upload.single('avatar'),
-    validate.postCreate,
-    controller.postCreate
+    validate.createBook,
+    controller.createBook
 );
 
 module.exports = router;

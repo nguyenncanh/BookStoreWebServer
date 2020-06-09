@@ -12,21 +12,22 @@ cloudinary.config({
     api_secret: process.env.CLOUD_SECRET
 });
 
-module.exports.index = async (req, res) => {
-    return res.status(200).json({ books: await Book.find() });
-};
-
-module.exports.search = async function (req, res) {
-    var q = req.query.q;
+module.exports.getBooks = async (req, res) => {
     var books = await Book.find();
-    var macthBooks = books.filter(function (book) {
-        return book.title.toLowerCase().indexOf(q.toLowerCase()) != -1;
-    });
+    if (!req.params.q) {
+        return res.status(200).json({ books: books });
+    } else {
+        var q = req.query.q;
+        var macthBooks = books.filter(function (book) {
+            return book.title.toLowerCase().indexOf(q.toLowerCase()) != -1;
+        });
 
-    return res.status(200).json({ books: macthBooks, searchValue: q });
+        return res.status(200).json({ books: macthBooks, searchValue: q });
+    }
+    
 };
 
-module.exports.view = async function (req, res) {
+module.exports.getBook = async function (req, res) {
     var id = req.params.id;
 
     var book = await Book.findById(id);
@@ -36,23 +37,14 @@ module.exports.view = async function (req, res) {
     });
 };
 
-module.exports.delete = async function (req, res) {
+module.exports.deleteBook = async function (req, res) {
     var id = req.params.id;
     await Book.findByIdAndRemove(id).exec();
 
     return res.status(200).json("Delete success!");
 };
 
-module.exports.update = async function (req, res) {
-    var id = req.params.id;
-    var book = await Book.findById(id);
-
-    return res.status(200).json({
-        book: book
-    });
-};
-
-module.exports.postUpdate = async function (req, res) {
+module.exports.updateBook = async function (req, res) {
     var id = req.params.id;
     const { title, des } = req.body;
     // Cập nhật dữ liệu
@@ -61,7 +53,7 @@ module.exports.postUpdate = async function (req, res) {
     return res.status(200).json("Update success!");
 };
 
-module.exports.postCreate = async function (req, res) {
+module.exports.createBook = async function (req, res) {
     var path = "";
 
     if (!req.file) {

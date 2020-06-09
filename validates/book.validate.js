@@ -1,4 +1,4 @@
-module.exports.postCreate = function(req, res, next) {
+module.exports.createBook = function(req, res, next) {
   var errors = [];
   if (!req.body.title) {
     errors.push("Title is required.");

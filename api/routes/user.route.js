@@ -8,32 +8,22 @@ var validate = require('../../validates/user.validate');
 var upload = multer({ dest: './public/uploads/' });
 
 
-router.get("/", controller.index);
+router.get("/", controller.getUsers);
 
-router.get('/search', controller.search);
+router.get('/:id', controller.getUser);
 
-router.get('/:id/view', controller.view);
+router.delete('/:id', controller.deleteUser);
 
-router.delete('/:id/delete', controller.delete);
-
-router.get('/:id/update', controller.update);
-
-router.put('/:id/update', controller.postUpdate);
+router.patch('/:id', controller.updateUser);
 
 // tên avatar phải giống với attribute name=avatar bên form input
-router.post('/create',
+router.post('/',
     upload.single('avatar'),
-    validate.postCreate,
-    controller.postCreate
+    validate.createUser,
+    controller.createUser
 );
 
-router.get('/profile', controller.profile)
-
-router.put('/profile', controller.updateProfile)
-
-router.get('/profile/avatar', controller.avatar)
-
-router.put('/profile/avatar',
+router.put('/profile/updateAvatar',
     upload.single('avatar'),
     controller.updateAvatar
 );

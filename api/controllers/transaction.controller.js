@@ -2,74 +2,68 @@ var Transaction = require('../../models/transaction.model');
 var Book = require('../../models/book.model');
 var User = require('../../models/user.model');
 
-module.exports.index = async (req, res) => {
+module.exports.getTransactions = async (req, res) => {
     try {
-        var cookieUser = req.signedCookies.userId;
-
-        var transaction = await Transaction.findOne({ $and: [{ idUser: cookieUser }, { isComplete: false }] });
-
-        var transactions = await Transaction.find();
-
-        var user = await User.findById(cookieUser);
-
         var users = await User.find();
-
         var books = await Book.find();
 
-        if (user.isAdmin === true) {
-            if (!transactions) {
-                throw new Error("There are currently no transactions");
+        if (!req.query.q) {
+            var cookieUser = req.signedCookies.userId;
+            var transaction = await Transaction.findOne({ $and: [{ idUser: cookieUser }, { isComplete: false }] });
+            var transactions = await Transaction.find();
+            var user = await User.findById(cookieUser);
+
+            if (user.isAdmin === true) {
+                if (!transactions) {
+                    throw new Error("There are currently no transactions");
+                } else {
+                    return res.status(200).json({
+                        transactions: transactions,
+                        users: users,
+                        books: books
+                    });
+                }
             } else {
-                return res.status(200).json({
-                    transactions: transactions,
-                    users: users,
-                    books: books});
+                if (!transaction) {
+                    throw new Error("You have no transactions yet");
+                } else {
+                    return res.status(200).json({
+                        transactions: transaction,
+                        users: user,
+                        books: books
+                    });
+                }
             }
         } else {
-            if (!transaction) {
-                throw new Error("You have no transactions yet");
-            } else {
-                return res.status(200).json({
-                    transactions: transaction,
-                    users: user,
-                    books: books});
+            var q = req.query.q.trim();
+
+            // Lấy danh sách user thông qua dữ liệu tìm kiếm
+            var matchUsers = users.filter(function (user) {
+                return user.name.toLowerCase().indexOf(q.toLowerCase()) != -1;
+            });
+
+            // Tìm transaction tương ứng với các user đã tìm ở trên
+            var matchTrans = [];
+            for (var i = 0; i < matchUsers.length; i++) {
+                var transTarget = await Transaction.findOne({ $and: [{ idUser: matchUsers[i]._id }, { isComplete: false }] });
+                if (transTarget !== null) {
+                    matchTrans.push(transTarget);
+                }
             }
+
+            return res.status(200).json({
+                transactions: matchTrans,
+                users: users,
+                books: books,
+                searchValue: q
+            });
         }
     } catch ({ message = "Invalid Required" }) {
         res.status(400).json({ message })
     }
 };
 
-module.exports.search = async function (req, res) {
-    var q = req.query.q.trim();
-
-    var users = await User.find();
-
-    var books = await Book.find();
-
-    // Lấy danh sách user thông qua dữ liệu tìm kiếm
-    var matchUsers = users.filter(function (user) {
-        return user.name.toLowerCase().indexOf(q.toLowerCase()) != -1;
-    });
-
-    // Tìm transaction tương ứng với các user đã tìm ở trên
-    var matchTrans = [];
-    for (var i = 0; i < matchUsers.length; i++) {
-        var transTarget = await Transaction.findOne({ $and: [{ idUser: matchUsers[i]._id }, { isComplete: false }] });
-        if (transTarget !== null) {
-            matchTrans.push(transTarget);
-        }
-    }
-
-    return res.status(200).json({
-        transactions: matchTrans,
-        users: users,
-        books: books,
-        searchValue: q
-    });
-};
-
-module.exports.view = async function (req, res) {
+module.exports.getTransaction = async function (req, res) {
     var id = req.params.id;
 
     var users = await User.find();
@@ -96,7 +90,7 @@ module.exports.view = async function (req, res) {
     });
 };
 
-module.exports.delete = async function (req, res) {
+module.exports.deleteTransaction = async function (req, res) {
     var id = req.params.id;
 
     await Transaction.findByIdAndRemove(id).exec();
@@ -125,7 +119,7 @@ module.exports.deleteBook = async function (req, res) {
             doc.save();
         });
     }
-    return res.status(200).json({message: "Delete success!"});
+    return res.status(200).json( "Delete success!");
 };
 
 module.exports.complete = async function (req, res) {
@@ -138,7 +132,7 @@ module.exports.complete = async function (req, res) {
 
     var error;
     if (!trans) {
-        return res.json({
+        return res.status(400).json({
             error: "The transaction does not exist.",
             transactions: transactions,
             users: users,
@@ -152,13 +146,13 @@ module.exports.complete = async function (req, res) {
     return res.status(200).json("Complete success!");
 };
 
-module.exports.create = async function (req, res) {
+module.exports.getUserAndBook = async function (req, res) {
     var users = await User.find();
     var books = await Book.find();
     return res.json({ users: users, books: books });
 };
 
-module.exports.postCreate = async function (req, res) {
+module.exports.createTransaction = async function (req, res) {
     var userName = req.body.user;
     var bookTitle = req.body.books;
     var arrUsers = await User.find();

@@ -43,7 +43,7 @@ module.exports.postLogin = async function (req, res) {
 
                 // res.cookie("userId", user._id, { signed: true });
                 // res.redirect("/");
-                return res.status(200).cookie("userId", user._id, { signed: true }).json({ message: "Login Success!", user })
+                return res.status(200).cookie("userId", user._id, { signed: true }).json({ message: "Login Success!"})
             }
 
         } else {

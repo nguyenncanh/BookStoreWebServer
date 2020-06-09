@@ -3,20 +3,18 @@ var router = express.Router();
 
 const controller = require('../controllers/transaction.controller');
 
-router.get("/", controller.index);
+router.get("/", controller.getTransactions);
 
-router.get('/search', controller.search);
+router.get('/:id', controller.getTransaction);
 
-router.get('/:id/view', controller.view);
+router.delete('/:id', controller.deleteTransaction);
 
-router.delete('/:id/delete', controller.delete);
+router.delete('/:id/:idbook', controller.deleteBook);
 
-router.delete('/:id/:idbook/deleteBook', controller.deleteBook);
-
-router.get('/create', controller.create);
+router.get('/createPage', controller.getUserAndBook);
 
 router.put('/:id/complete', controller.complete);
 
-router.post('/create', controller.postCreate);
+router.post('/', controller.createTransaction);
 
 module.exports = router;

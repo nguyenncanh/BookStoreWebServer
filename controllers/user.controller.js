@@ -114,7 +114,7 @@ module.exports.postUpdate = async function(req, res) {
   //db.get('books').value().splice(pos, 1, req.body).write();
 };
 
-module.exports.postCreate = async function(req, res) {
+module.exports.createUser = async function(req, res) {
   var hashPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12));
   var path = '';
   if (!req.file) {
