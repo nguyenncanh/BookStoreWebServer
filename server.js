@@ -9,7 +9,7 @@ const express = require("express");
 const app = express();
 var cookieParser = require("cookie-parser");
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
   useNewUrlParser: true
 }).then(_ => console.log('mongodb connected'));
