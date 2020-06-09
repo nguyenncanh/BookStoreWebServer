@@ -3,7 +3,6 @@ var Book = require('../models/book.model');
 
 //var oldPage = 0;
 module.exports.index = async (req, res, next) => {
-  try {
     //   var currentPage = parseInt(req.query.page) || 1; //n
     //   var perPage = 8; //x
 
@@ -35,17 +34,10 @@ module.exports.index = async (req, res, next) => {
     //                               currentPage: currentPage, 
     //                               totalPage: totalPage});
     var products = await Book.find();
-    var a;
-    a.b();
+    
     res.render("products/index", {
       products: products
     });
-  } catch (error) {
-    next(error);
-    res.render('error/500', {
-      error: error
-    })
-  }
 };
 
 module.exports.search = async function(req, res) {
