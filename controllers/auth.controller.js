@@ -3,6 +3,14 @@ const bcrypt = require("bcrypt");
 const sgMail = require("@sendgrid/mail");
 //const db = require("../db");
 var User = require('../models/user.model');
+const fs = require('fs');
+var cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET
+});
 
 module.exports.login = (req, res) => {
   res.render("auth/login");
@@ -93,4 +101,45 @@ module.exports.logout = function(req, res) {
   res.clearCookie('userId');
   res.clearCookie('sessionId');
   res.redirect('/');
+}
+
+module.exports.register = async function(req, res) {
+  var { name, phone, email, password, confirmPass} = req.body;
+  if (password !== confirmPass) {
+    res.render('auth/register', {
+      errors: ['The confirm password is not the same as the password']
+    });
+  } else {
+    var hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(12));
+    var path = "";
+
+    if (!req.file) {
+      path = "https://cdn.glitch.com/42d1b825-d513-481d-8f96-88869ec4cec7%2Favatar_defaul.png?v=1589035529595";
+    } else {
+      path = await cloudinary.uploader.upload(req.file.path).then(doc => doc.url)
+    }
+
+    var newUser = new User({
+        name: name,
+        phone: phone,
+        email: email,
+        password: hashPassword,
+        avatar: path,
+        isAdmin: false
+    });
+    await newUser.save();
+
+    // xóa file ảnh để ko phải lưu trong file upload
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.render('auth/register', {
+      message: "Register success!. Now you can login."
+    });
+  }
+}
+
+module.exports.registerPage = function(req, res) {
+  res.render('auth/register');
 }

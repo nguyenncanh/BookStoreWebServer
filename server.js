@@ -5,7 +5,7 @@
 // but feel free to use whatever libraries or frameworks you'd like through `package.json`.
 require("dotenv").config();
 const express = require("express");
-
+var PORT = process.env.PORT || 3000;
 const app = express();
 var cookieParser = require("cookie-parser");
 var mongoose = require('mongoose');
@@ -83,6 +83,6 @@ app.use("/auth", authRoute);
 app.use("/cart", cartRoute);
 
 // listen for requests :)
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server listening on port " + process.env.PORT || 3000);
+app.listen(PORT, () => {
+  console.log("Server listening on port " + PORT);
 });
