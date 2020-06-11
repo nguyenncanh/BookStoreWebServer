@@ -21,6 +21,7 @@ const transRoute = require("./routes/transaction.route");
 const authRoute = require("./routes/auth.route");
 const productsRoute = require("./routes/products.route");
 const cartRoute = require("./routes/cart.route");
+const shopRoute = require("./routes/shop.route");
 
 var apiAuthRoute = require("./api/routes/auth.route");
 var apiTransactionsRoute = require("./api/routes/transaction.route");
@@ -81,6 +82,9 @@ app.use("/auth", authRoute);
 
 // cart
 app.use("/cart", cartRoute);
+
+// shop
+app.use('/shops', shopRoute);
 
 // listen for requests :)
 app.listen(PORT, () => {
