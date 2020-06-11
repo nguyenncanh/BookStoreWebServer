@@ -15,4 +15,6 @@ router.post('/registerShop',
             validate.registerShop, 
             controller.registerShop)
 
+
+
 module.exports = router;

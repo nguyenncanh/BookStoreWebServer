@@ -1,11 +1,11 @@
-var express = require("express");
-var router = express.Router();
 var Shop = require('../models/shop.model');
 var User = require('../models/user.model');
 
 module.exports.getShops = async function(req, res) {
     var shops = await Shop.find();
-    res.render('shops/index', {shops: shops});
+    var users = await User.find();
+
+    res.render('shops/index', {shops: shops, users: users});
 }
 
 module.exports.registerShopPage = function(req, res) {
