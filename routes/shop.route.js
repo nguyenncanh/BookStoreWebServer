@@ -15,6 +15,6 @@ router.post('/registerShop',
             validate.registerShop, 
             controller.registerShop)
 
-
+router.get('/:id/books', controller.getBooksShop)
 
 module.exports = router;

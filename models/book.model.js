@@ -4,7 +4,8 @@ var bookSchema = new mongoose.Schema({
   title: String,
   coverUrl: String,
   des: String,
-  price: String
+  price: String,
+  idShop: String
 });
 
 var Book = mongoose.model('Book', bookSchema, 'books');

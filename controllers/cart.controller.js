@@ -54,7 +54,7 @@ module.exports.addToCart = async function(req, res, next) {
   //   .set('cart.' + productId, count + 1)
   //   .write();
 
-  res.redirect('/products');
+  res.redirect('back');
 }
 
 module.exports.index = async function(req, res) {

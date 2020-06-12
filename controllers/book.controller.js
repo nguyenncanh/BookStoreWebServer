@@ -3,6 +3,7 @@ var router = express.Router();
 //const db = require("../db");
 //const shortid = require("shortid");
 var Book = require('../models/book.model');
+var Shop = require('../models/shop.model');
 var cloudinary = require("cloudinary").v2;
 const fs = require('fs');
 
@@ -133,6 +134,8 @@ module.exports.createBook = async function(req, res) {
   } else {
     path = await cloudinary.uploader.upload(req.file.path).then(doc => doc.url);
   }
+
+  var shop = await Shop.findOne({ shopName: req.body.shopName });
   
   //lowdb
   // db.get("books")
@@ -143,7 +146,8 @@ module.exports.createBook = async function(req, res) {
   var newBook = new Book({
     title: req.body.title,
     des: req.body.des,
-    coverUrl: path
+    coverUrl: path,
+    idShop: shop._id
   });
   await newBook.save();
 

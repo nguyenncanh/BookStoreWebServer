@@ -1,5 +1,6 @@
 var Shop = require('../models/shop.model');
 var User = require('../models/user.model');
+var Book = require('../models/book.model');
 
 module.exports.getShops = async function(req, res) {
     var shops = await Shop.find();
@@ -39,3 +40,9 @@ module.exports.registerShop = async function(req, res) {
     }
 }
 
+module.exports.getBooksShop = async function(req, res) {
+    var idShop = req.params.id;
+    var products = await Book.find({ idShop: idShop });
+    var shop = await Shop.findById({_id: idShop})
+    res.render('shops/shopBook', { products: products, shop: shop });
+}

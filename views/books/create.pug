@@ -14,7 +14,9 @@ block content
     input#title.form-control(type="text", name="title", , value=values ? values.title : "")
     label(for="des") Description:
     input#des.form-control(type="text", name="des", value=values ? values.des : "")
-    abel(for="avatar") Avatar:
+    label(for="shopName") Shop name:
+    input#shopName.form-control(type="text", name="shopName", , value=values ? values.shopName : "")
+    label(for="avatar") Avatar:
     input#avatar.form-control-file(type="file", name="avatar")
     .text-center.mt-3
       button.btn.btn-success Create
